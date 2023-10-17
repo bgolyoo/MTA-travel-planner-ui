@@ -13,18 +13,6 @@ function App() {
             >
               Itineraries
             </Link>
-            <Link
-              to="/1/update"
-              className="text-sm font-medium transition-colors hover:text-primary"
-            >
-              Update Itinerary
-            </Link>
-            <Link
-              to="/1"
-              className="text-sm font-medium transition-colors hover:text-primary"
-            >
-              Itinerary
-            </Link>
           </nav>
         </div>
         <div className="container flex-1 space-y-4 p-8 pt-6">

@@ -1,13 +1,26 @@
 import { Button } from '@/components/ui/button.tsx';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '@/components/ui/dialog.tsx';
+import { useToast } from '@/components/ui/use-toast.ts';
 import { Itinerary } from '@/interfaces/itinerary.ts';
 import { cn } from '@/lib/utils.ts';
 import { format } from 'date-fns';
 import { Bus, ChevronLeft, Plane, Train } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 export function ItineraryDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   const [itinerary, setItinerary] = useState<Itinerary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -32,6 +45,32 @@ export function ItineraryDetails() {
         setLoading(false);
       });
   }, [id]);
+
+  function deleteItinerary(id: number) {
+    fetch(`http://localhost:3000/itineraries/${id}`, { method: 'DELETE' })
+      .then((response) => {
+        if (!response.ok) {
+          return response.json().then((err) => {
+            throw new Error(err.message);
+          });
+        }
+      })
+      .then(() => {
+        navigate('/');
+        toast({
+          title: 'We\'ve deleted your itinerary for you.',
+        });
+        setLoading(false);
+      })
+      .catch((err) => {
+        toast({
+          title: 'Uh-oh! There was an error deleting your itinerary.',
+          variant: 'destructive'
+        });
+        setError(err);
+        setLoading(false);
+      });
+  }
 
   return (
     <>
@@ -124,8 +163,26 @@ export function ItineraryDetails() {
               <Link to={`/${itinerary.id}/update`}>
                 <Button variant="default">Update</Button>
               </Link>
-              {/*TODO:*/}
-              {/*<Button variant="destructive">Delete</Button>*/}
+
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="destructive">Delete</Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Delete Itinerary</DialogTitle>
+                    <DialogDescription>
+                      Are you sure you want to delete this itinerary? This action cannot be undone.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button variant="destructive" type="submit"
+                              onClick={() => deleteItinerary(itinerary.id)}>Delete</Button>
+                    </DialogClose>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         </>

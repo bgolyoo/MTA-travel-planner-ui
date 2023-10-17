@@ -1,13 +1,14 @@
 import { Button } from '@/components/ui/button.tsx';
-import { ToastAction } from '@/components/ui/toast.tsx';
 import { useToast } from '@/components/ui/use-toast.ts';
 import { Itinerary } from '@/interfaces/itinerary.ts';
 import { ItineraryForm, ItineraryFormValues } from '@/routes/ItineraryForm.tsx';
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 export function UpdateItinerary() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   const [itinerary, setItinerary] = useState<Itinerary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -33,8 +34,6 @@ export function UpdateItinerary() {
       });
   }, [id]);
 
-  const { toast } = useToast();
-
   function onSubmit(data: ItineraryFormValues, id: number) {
     setLoading(false);
     fetch(`http://localhost:3000/itineraries/${id}`, {
@@ -51,9 +50,9 @@ export function UpdateItinerary() {
       })
       .then((result) => {
         setLoading(false);
+        navigate(`/${result.id}`);
         toast({
-          title: 'We\'ve updated your itinerary for you.',
-          action: <Link to={`/${result.id}`}><ToastAction altText="View">View</ToastAction></Link>
+          title: 'We\'ve updated your itinerary for you.'
         });
       })
       .catch(() => {

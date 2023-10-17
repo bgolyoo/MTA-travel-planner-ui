@@ -1,10 +1,9 @@
 import { Button } from '@/components/ui/button.tsx';
-import { ToastAction } from '@/components/ui/toast.tsx';
 import { useToast } from '@/components/ui/use-toast.ts';
 import { hotels, ItineraryForm, ItineraryFormValues, usCities } from '@/routes/ItineraryForm.tsx';
 import { addWeeks } from 'date-fns';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 const defaultValues: Partial<ItineraryFormValues> = {
@@ -18,9 +17,10 @@ const defaultValues: Partial<ItineraryFormValues> = {
 };
 
 export function CreateItinerary() {
-  const [loading, setLoading] = useState(false);
-
+  const navigate = useNavigate();
   const { toast } = useToast();
+
+  const [loading, setLoading] = useState(false);
 
   function onSubmit(data: ItineraryFormValues) {
     setLoading(false);
@@ -37,9 +37,9 @@ export function CreateItinerary() {
       })
       .then((result) => {
         setLoading(false);
+        navigate(`/${result.id}`);
         toast({
-          title: 'We\'ve created your itinerary for you.',
-          action: <Link to={`/${result.id}`}><ToastAction altText="View">View</ToastAction></Link>
+          title: 'We\'ve created your itinerary for you.'
         });
       })
       .catch(() => {
