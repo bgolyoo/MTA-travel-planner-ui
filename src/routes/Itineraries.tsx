@@ -1,9 +1,13 @@
 import { Button } from '@/components/ui/button.tsx';
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Itinerary } from '@/interfaces/itinerary.ts';
+import { format } from 'date-fns';
+import { Bus, Plane, Train } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 export function Itineraries() {
-  const [data, setData] = useState<{ id: number; name: string }[]>([]);
+  const [itineraries, setItineraries] = useState<Itinerary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -16,7 +20,7 @@ export function Itineraries() {
         return response.json();
       })
       .then((result) => {
-        setData(result);
+        setItineraries(result);
         setLoading(false);
       })
       .catch((err) => {
@@ -40,15 +44,56 @@ export function Itineraries() {
         ) : error ? (
           <p>Error: {error.message}</p>
         ) : (
-          <ul>
-            {data.map((item) => (
-              <li key={item.id}>{item.name}</li>
-            ))}
-          </ul>
+          <Table>
+            <TableCaption></TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>From City</TableHead>
+                <TableHead>To City</TableHead>
+                <TableHead>Hotel</TableHead>
+                <TableHead>Transportation</TableHead>
+                <TableHead className="text-right space-x-2 w-[200px]"></TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {itineraries.map((itinerary) => (
+                <TableRow key={itinerary.id}>
+                  <TableCell className="font-medium">{itinerary.name}</TableCell>
+                  <TableCell>
+                    <span className="flex space-x-2">
+                    <span>{format(new Date(itinerary.fromDate), 'PPP')}</span>
+                    <span>-</span>
+                    <span>{format(new Date(itinerary.toDate), 'PPP')}</span>
+                    </span>
+                  </TableCell>
+                  <TableCell>{itinerary.fromCity}</TableCell>
+                  <TableCell>{itinerary.toCity}</TableCell>
+                  <TableCell>{itinerary.hotel}</TableCell>
+                  <TableCell>{
+                    {
+                      ['bus']: (<div className="flex items-center space-x-2"><Bus size="25"/> <span>Bus</span></div>),
+                      ['train']: (
+                        <div className="flex items-center space-x-2"><Train size="25"/> <span>Train</span></div>),
+                      ['plane']: (
+                        <div className="flex items-center space-x-2"><Plane size="25"/> <span>Plane</span></div>)
+                    }[itinerary.transportation]
+                  }</TableCell>
+                  <TableCell className="text-right space-x-2 w-[200px]">
+                    <Link to={`/${itinerary.id}`}>
+                      <Button variant="outline">View</Button>
+                    </Link>
+                    <Link to={`/${itinerary.id}/update`}>
+                      <Button variant="outline">Update</Button>
+                    </Link>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         )}
       </div>
-
-      <Button variant="outline">Button</Button>
     </>
   );
 }
