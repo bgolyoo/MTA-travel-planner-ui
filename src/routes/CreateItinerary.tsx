@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button.tsx';
+import { ToastAction } from '@/components/ui/toast.tsx';
 import { useToast } from '@/components/ui/use-toast.ts';
 import { hotels, ItineraryForm, ItineraryFormValues, usCities } from '@/routes/ItineraryForm.tsx';
 import { addWeeks } from 'date-fns';
@@ -37,9 +38,10 @@ export function CreateItinerary() {
       })
       .then((result) => {
         setLoading(false);
-        navigate(`/${result.id}`);
+        navigate('/');
         toast({
-          title: 'We\'ve created your itinerary for you.'
+          title: 'We\'ve created your itinerary for you.',
+          action: <Link to={`/${result.id}`}><ToastAction altText="View">View</ToastAction></Link>
         });
       })
       .catch(() => {

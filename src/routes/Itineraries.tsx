@@ -33,9 +33,9 @@ export function Itineraries() {
     <>
       <div className="flex items-center justify-between space-y-2">
         <h2 className="text-3xl font-bold tracking-tight">Itineraries</h2>
-        <Link to="/create">
+        {!!itineraries?.length && <Link to="/create">
           <Button variant="default">Create Itinerary</Button>
-        </Link>
+        </Link>}
       </div>
 
       <div>
@@ -43,7 +43,7 @@ export function Itineraries() {
           <p>Loading...</p>
         ) : error ? (
           <p>Error: {error.message}</p>
-        ) : (
+        ) : itineraries?.length ? (
           <Table>
             <TableCaption></TableCaption>
             <TableHeader>
@@ -92,7 +92,12 @@ export function Itineraries() {
               ))}
             </TableBody>
           </Table>
-        )}
+        ) : (<div className="w-ful h-[300px] flex flex-col space-y-8 items-center justify-center">
+          <div>There are no itineraries yet. Let's create one.</div>
+          <Link to="/create">
+            <Button variant="default">Create Itinerary</Button>
+          </Link>
+        </div>)}
       </div>
     </>
   );
