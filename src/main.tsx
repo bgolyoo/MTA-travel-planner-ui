@@ -1,5 +1,6 @@
 import App from '@/App.tsx';
 import { CreateItinerary } from '@/routes/CreateItinerary.tsx';
+import ErrorPage from '@/routes/ErrorPage.tsx';
 import { Itineraries } from '@/routes/Itineraries.tsx';
 import { ItineraryDetails } from '@/routes/ItineraryDetails.tsx';
 import { UpdateItinerary } from '@/routes/UpdateItinerary.tsx';
@@ -12,6 +13,7 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <App/>,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: '/',
